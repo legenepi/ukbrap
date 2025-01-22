@@ -1,7 +1,7 @@
 #!/bin/bash
 
 usage() {
-    echo "Usage: `basename $0` -d DATASET -f REQUIRED_FIELDS_FILE -p PATH -o OUTPUT_FILE [-h]" 1>&2
+    echo "Usage: `basename $0` -d DATASET -f REQUIRED_FIELDS_FILE -p PATH -o OUTPUT_PREFIX [-h]" 1>&2
     echo
     echo "  -d      RAP dataset to extract fields from e.g. /app648_20231207195939.dataset"
     echo "  -f      File containing UK Biobank field ID per line"
@@ -49,7 +49,6 @@ while getopts ":d:f:p:o:h" opt; do
 done
 
 FIELDS_USE=${BASE}.fields
-FIELDS_OUT=${BASE}.csv
 
 dx mkdir -p $RAP_PATH &&
     dx ls ${RAP_PATH}/$FIELDS_USE 2> /dev/null && dx rm -a ${RAP_PATH}/$FIELDS_USE
@@ -63,7 +62,7 @@ dx run table-exporter \
     -ientity="participant" \
     -ifield_names_file_txt="${RAP_PATH}/$FIELDS_USE" \
     -iheader_style=FIELD-TITLE \
-    -ioutput="$FIELDS_OUT" \
+    -ioutput="$BASE" \
     --destination $RAP_PATH \
     --instance-type mem2_ssd2_x16 \
     --name extract_fields \
